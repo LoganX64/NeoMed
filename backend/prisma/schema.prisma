@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+
+  documents Document[]        @relation("OwnerDocuments")
+  shared    SharedAccess[]
+  comments  Comment[]
+  versions  DocumentVersion[]
+  presence  Presence[]
+}
+
+model Document {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  ownerId   Int
+  owner     User     @relation("OwnerDocuments", fields: [ownerId], references: [id])
+
+  sharedWith SharedAccess[]
+  versions   DocumentVersion[]
+  comments   Comment[]
+  presence   Presence[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SharedAccess {
+  id         Int      @id @default(autoincrement())
+  documentId Int
+  userId     Int
+  role       String   @default("VIEWER")
+  createdAt  DateTime @default(now())
+
+  document   Document @relation(fields: [documentId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([documentId, userId])
+}
+
+model DocumentVersion {
+  id         Int      @id @default(autoincrement())
+  documentId Int
+  title      String
+  content    String
+  createdById Int
+  createdBy  User     @relation(fields: [createdById], references: [id])
+  createdAt  DateTime @default(now())
+
+  document   Document @relation(fields: [documentId], references: [id])
+
+  @@index([documentId, createdAt])
+}
+
+model Comment {
+  id          Int        @id @default(autoincrement())
+  documentId  Int
+  createdById Int
+  createdBy   User       @relation(fields: [createdById], references: [id])
+  kind        String     @default("COMMENT")
+  body        String
+  fromPos     Int?
+  toPos       Int?
+  resolvedAt  DateTime?
+  createdAt   DateTime   @default(now())
+
+  document    Document   @relation(fields: [documentId], references: [id])
+
+  @@index([documentId, createdAt])
+}
+
+model Presence {
+  id          Int      @id @default(autoincrement())
+  documentId  Int
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  document    Document @relation(fields: [documentId], references: [id])
+  lastSeenAt  DateTime
+  expiresAt   DateTime
+
+  @@unique([documentId, userId])
+  @@index([documentId, expiresAt])
+}
+
