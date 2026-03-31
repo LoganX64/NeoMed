@@ -12,7 +12,7 @@ A lightweight, collaborative document editor built for the AI-Native Full Stack 
 - **Responsiveness**: Fully responsive UI for mobile, tablet, and desktop views.
 
 ## Demo
-[![NeoMed Demo](https://cdn.loom.com/sessions/thumbnails/a808c3f851a74ed1893b9ad68edfce4c-with-play.gif)](https://www.loom.com/share/a808c3f851a74ed1893b9ad68edfce4c)
+https://github.com/user-attachments/assets/5ae5ee14-1eb4-4011-bfb9-bd8f0c4ae6fc
 
 ## Tech Stack
 - **Frontend**: React 19, Tailwind CSS v4, TipTap (Editor).
